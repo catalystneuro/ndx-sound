@@ -1,0 +1,13 @@
+namespaces:
+- author:
+  - Ben Dichter
+  contact:
+  - ben.dichter@catalystneuro.com
+  doc: Represent acoustic stimuli and responses
+  name: ndx-sound
+  schema:
+  - namespace: core
+    neurodata_types:
+    - ElectricalSeries
+  - source: ndx-sound.extensions.yaml
+  version: 0.1.0
