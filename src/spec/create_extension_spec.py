@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import os.path
 
-from pynwb.spec import NWBNamespaceBuilder, export_spec, NWBGroupSpec, NWBAttributeSpec
-# TODO: import other spec classes as needed
-# from pynwb.spec import NWBDatasetSpec, NWBLinkSpec, NWBDtypeSpec, NWBRefSpec
+from pynwb.spec import NWBNamespaceBuilder, export_spec, NWBGroupSpec, NWBDatasetSpec, NWBAttributeSpec
+# from pynwb.spec import NWBDatasetSpec, NWBLinkSpec, NWBDtypeSpec, NWBRefSpec, NWBAttributeSpec
 
 
 def main():
@@ -16,33 +15,39 @@ def main():
         contact=list(map(str.strip, """ben.dichter@catalystneuro.com""".split(',')))
     )
 
-    # TODO: specify the neurodata_types that are used by the extension as well
     # as in which namespace they are found.
     # this is similar to specifying the Python modules that need to be imported
     # to use your new data types.
     # all types included or used by the types specified here will also be
     # included.
-    ns_builder.include_type('ElectricalSeries', namespace='core')
+    ns_builder.include_type('TimeSeries', namespace='core')
 
-    # TODO: define your new data types
     # see https://pynwb.readthedocs.io/en/latest/extensions.html#extending-nwb
     # for more information
-    tetrode_series = NWBGroupSpec(
-        neurodata_type_def='TetrodeSeries',
-        neurodata_type_inc='ElectricalSeries',
-        doc=('An extension of ElectricalSeries to include the tetrode ID for '
-             'each time series.'),
-        attributes=[
-            NWBAttributeSpec(
-                name='trode_id',
-                doc='The tetrode ID.',
-                dtype='int32'
+    acoustic_waveform_series = NWBGroupSpec(
+        neurodata_type_def='AcousticWaveformSeries',
+        neurodata_type_inc='TimeSeries',
+        doc="single or multi-channel acoustic series",
+        datasets=[
+            NWBDatasetSpec(
+                name="data",
+                doc="acoustic waveform",
+                dtype='int16',
+                shape=((None,), (None, 1), (None, 2)),
+                dims=(("time",), ("time", "channel"), ("time", "channels")),
+                attributes=[
+                    NWBAttributeSpec(
+                        name="unit",
+                        doc="SI unit of data",
+                        dtype="text",
+                        value="n.a.",
+                    )
+                ]
             )
         ],
     )
 
-    # TODO: add all of your new data types to this list
-    new_data_types = [tetrode_series]
+    new_data_types = [acoustic_waveform_series]
 
     # export the spec to yaml files in the spec folder
     output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'spec'))

@@ -8,6 +8,6 @@ namespaces:
   schema:
   - namespace: core
     neurodata_types:
-    - ElectricalSeries
+    - TimeSeries
   - source: ndx-sound.extensions.yaml
   version: 0.1.0

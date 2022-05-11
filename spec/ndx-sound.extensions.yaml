@@ -1,8 +1,25 @@
 groups:
-- neurodata_type_def: TetrodeSeries
-  neurodata_type_inc: ElectricalSeries
-  doc: An extension of ElectricalSeries to include the tetrode ID for each time series.
-  attributes:
-  - name: trode_id
-    dtype: int32
-    doc: The tetrode ID.
+- neurodata_type_def: AcousticWaveformSeries
+  neurodata_type_inc: TimeSeries
+  doc: single or multi-channel acoustic series
+  datasets:
+  - name: data
+    dtype: int16
+    dims:
+    - - time
+    - - time
+      - channel
+    - - time
+      - channels
+    shape:
+    - - null
+    - - null
+      - 1
+    - - null
+      - 2
+    doc: acoustic waveform
+    attributes:
+    - name: unit
+      dtype: text
+      value: n.a.
+      doc: SI unit of data
