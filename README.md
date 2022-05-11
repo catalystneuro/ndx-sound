@@ -36,7 +36,18 @@ nwbfile.add_stimulus(acoustic_waveform_series)
 ```
 
 ### Visualization
-You can have the sound widget automatically loaded into `nwb2widget`.
+
+You can use the plotting function on its own outside nwbwidgets.
+```python
+from nwb_sound.widgets import plot_acoustic_waveform
+
+plot_acoustic_waveform(nwbfile.stimulus["sound_stimulus1"])
+```
+
+![](ndx_sound_plot.png)
+
+
+You can also have the sound widget automatically loaded into `nwb2widget`.
 ```python
 from ndx_sound import widgets
 ```
@@ -47,13 +58,7 @@ from nwbwidgets import nwb2widget
 nwb2widget(nwbfile)
 ```
 
-You can also use the plotting function on its own outside nwbwidgets.
-```python
-from nwb_sound.widgets import plot_acoustic_waveform
 
-plot_acoustic_waveform(nwbfile.stimulus["sound_stimulus1"])
-
-```
 
 ---
 This extension was created using [ndx-template](https://github.com/nwb-extensions/ndx-template).
