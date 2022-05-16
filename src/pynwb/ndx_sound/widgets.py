@@ -5,7 +5,10 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 from nwbwidgets import default_neurodata_vis_spec
 from nwbwidgets.utils.timeseries import get_timeseries_tt
+from nwbwidgets.base import fig2widget
 from pynwb.file import TimeSeries
+from ipywidgets import Output, VBox
+from IPython.display import Audio
 
 from . import AcousticWaveformSeries
 
@@ -24,9 +27,18 @@ def plot_spectrogram(
 
     D = librosa.amplitude_to_db(np.abs(librosa.stft(y, n_fft=n_fft)))
 
+    tt = np.arange(len(D.T)) / time_series.rate * n_fft / 4 + time_series.starting_time
+
     img = librosa.display.specshow(
-        D, y_axis="log", x_axis="time", sr=sr, cmap="plasma", ax=ax
+        D,
+        y_axis="log",
+        x_axis="time",
+        sr=sr,
+        cmap="plasma",
+        ax=ax,
+        x_coords=tt
     )
+
     fig.colorbar(img, ax=ax, format="%+2.f dB", cax=cax)
 
     return ax
@@ -43,6 +55,8 @@ def plot_waveform(time_series: TimeSeries, ax=None, figsize=(8, 4)):
 
     ax.axis("off")
     ax.autoscale(enable=True, axis="x", tight=True)
+
+    return ax
 
 
 def plot_acoustic_waveform(time_series: TimeSeries, figsize=None, **kwargs):
@@ -68,6 +82,27 @@ def plot_acoustic_waveform(time_series: TimeSeries, figsize=None, **kwargs):
     plot_spectrogram(time_series, ax=ax2, cax=cax)
 
     return fig
+
+
+def play_sound_widget(time_series: TimeSeries):
+
+    y = time_series.data[:].astype(float)
+    sr = time_series.rate
+
+    out = Output()
+    out.append_display_data(Audio(y, rate=sr))
+
+    return out
+
+
+def acoustic_waveform_widget(time_series: TimeSeries):
+
+    return VBox(
+        [
+            fig2widget(plot_acoustic_waveform(time_series)),
+            play_sound_widget(time_series)
+        ]
+    )
 
 
 default_neurodata_vis_spec.update({AcousticWaveformSeries: plot_acoustic_waveform})
