@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
@@ -14,8 +16,40 @@ from . import AcousticWaveformSeries
 
 
 def plot_spectrogram(
-    time_series: TimeSeries, n_fft: int = 1024, ax=None, figsize=(8, 4), cax=None
+    time_series: TimeSeries,
+    n_fft: int = 1024,
+    ax: plt.Axes = None,
+    figsize: Tuple[int] = (8, 4),
+    cax: plt.Axes = None,
+    stft_kwargs: dict = None,
+    specshow_kwargs: dict = None,
 ):
+    """
+
+    Parameters
+    ----------
+    time_series: pynwb.file.TimeSeries
+    n_fft: int, optional
+        Default is 1024
+    ax: plt.Axes
+    figsize: tuple
+    cax: plt.Axes
+    stft_kwargs: dict
+        kwargs passed to librosa.stft
+    specshow_kwargs: dict
+        kwargs passed to librosa.display.specshow
+
+    Returns
+    -------
+    plt.Axes
+
+    """
+
+    if stft_kwargs is None:
+        stft_kwargs = dict()
+
+    if specshow_kwargs is None:
+        specshow_kwargs = dict()
 
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
@@ -25,7 +59,7 @@ def plot_spectrogram(
     y = time_series.data[:].astype(float)
     sr = time_series.rate
 
-    D = librosa.amplitude_to_db(np.abs(librosa.stft(y, n_fft=n_fft)))
+    D = librosa.amplitude_to_db(np.abs(librosa.stft(y, n_fft=n_fft, **stft_kwargs)))
 
     tt = np.arange(len(D.T)) / time_series.rate * n_fft / 4 + time_series.starting_time
 
@@ -36,8 +70,11 @@ def plot_spectrogram(
         sr=sr,
         cmap="plasma",
         ax=ax,
-        x_coords=tt
+        x_coords=tt,
+        **specshow_kwargs,
     )
+
+    ax.set_xlabel("time (s)")
 
     fig.colorbar(img, ax=ax, format="%+2.f dB", cax=cax)
 
@@ -79,7 +116,7 @@ def plot_acoustic_waveform(time_series: TimeSeries, figsize=None, **kwargs):
     ax2 = fig.add_subplot(gs[1, 0])
     cax = fig.add_subplot(gs[1, 1])
 
-    plot_spectrogram(time_series, ax=ax2, cax=cax)
+    plot_spectrogram(time_series, ax=ax2, cax=cax, **kwargs)
 
     return fig
 
@@ -95,12 +132,12 @@ def play_sound_widget(time_series: TimeSeries):
     return out
 
 
-def acoustic_waveform_widget(time_series: TimeSeries):
+def acoustic_waveform_widget(time_series: TimeSeries, **kwargs):
 
     return VBox(
         [
-            fig2widget(plot_acoustic_waveform(time_series)),
-            play_sound_widget(time_series)
+            fig2widget(plot_acoustic_waveform(time_series, **kwargs)),
+            play_sound_widget(time_series),
         ]
     )
 
