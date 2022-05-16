@@ -4,13 +4,13 @@ import librosa
 import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
+from IPython.display import Audio
+from ipywidgets import Output, VBox
 from matplotlib.gridspec import GridSpec
 from nwbwidgets import default_neurodata_vis_spec
-from nwbwidgets.utils.timeseries import get_timeseries_tt
 from nwbwidgets.base import fig2widget
+from nwbwidgets.utils.timeseries import get_timeseries_tt
 from pynwb.file import TimeSeries
-from ipywidgets import Output, VBox
-from IPython.display import Audio
 
 from . import AcousticWaveformSeries
 
