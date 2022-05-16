@@ -37,14 +37,25 @@ nwbfile.add_stimulus(acoustic_waveform_series)
 
 ### Visualization
 
-You can use the plotting function on its own outside nwbwidgets.
+Use `plot_acoustic_waveform` on its own outside nwbwidgets.
 ```python
 from nwb_sound.widgets import plot_acoustic_waveform
 
-plot_acoustic_waveform(nwbfile.stimulus["sound_stimulus1"])
+plot_acoustic_waveform(nwbfile.stimulus["acoustic_stimulus"])
 ```
 
 ![](ndx_sound_plot.png)
+
+Use `acoustic_waveform_widget` to include an Audio element that plays the sound.
+
+```python
+from ndx_sound.widgets import acoustic_waveform_widget
+
+acoustic_waveform_widget(nwb.stimulus["acoustic_stimulus"])
+```
+
+![](acoustic_waveform_widget.png)
+
 
 
 You can also have the sound widget automatically loaded into `nwb2widget`.
