@@ -23,3 +23,11 @@ groups:
       dtype: text
       value: n.a.
       doc: SI unit of data
+  - name: starting_time
+    dtype: float
+    default_value: 0.0
+    doc: starting time of acoustic waveform.
+    attributes:
+    - name: rate
+      dtype: float
+      doc: sampling frequency of acoustic waveform.
