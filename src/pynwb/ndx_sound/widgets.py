@@ -25,6 +25,7 @@ def plot_spectrogram(
     specshow_kwargs: dict = None,
 ):
     """
+    Plot spectrogram of sound.
 
     Parameters
     ----------
@@ -82,6 +83,19 @@ def plot_spectrogram(
 
 
 def plot_waveform(time_series: TimeSeries, ax=None, figsize=(8, 4)):
+    """
+    Plot waveform of sound
+
+    Parameters
+    ----------
+    time_series
+    ax
+    figsize
+
+    Returns
+    -------
+
+    """
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
 
@@ -96,7 +110,20 @@ def plot_waveform(time_series: TimeSeries, ax=None, figsize=(8, 4)):
     return ax
 
 
-def plot_acoustic_waveform(time_series: TimeSeries, figsize=None, **kwargs):
+def plot_sound(time_series: TimeSeries, figsize=None, **kwargs):
+    """
+    Figure for waveform and spectrogram
+
+    Parameters
+    ----------
+    time_series
+    figsize
+    kwargs
+
+    Returns
+    -------
+
+    """
 
     gs = GridSpec(
         nrows=2,
@@ -122,6 +149,17 @@ def plot_acoustic_waveform(time_series: TimeSeries, figsize=None, **kwargs):
 
 
 def play_sound_widget(time_series: TimeSeries):
+    """
+    Widget for playing sound.
+
+    Parameters
+    ----------
+    time_series
+
+    Returns
+    -------
+
+    """
 
     y = time_series.data[:].astype(float)
     sr = time_series.rate
@@ -133,10 +171,22 @@ def play_sound_widget(time_series: TimeSeries):
 
 
 def acoustic_waveform_widget(time_series: TimeSeries, **kwargs):
+    """
+    Entire widget, with waveform, spectrogram, and sound.
+
+    Parameters
+    ----------
+    time_series
+    kwargs
+
+    Returns
+    -------
+
+    """
 
     return VBox(
         [
-            fig2widget(plot_acoustic_waveform(time_series, **kwargs)),
+            fig2widget(plot_sound(time_series, **kwargs)),
             play_sound_widget(time_series),
         ]
     )
