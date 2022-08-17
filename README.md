@@ -37,11 +37,11 @@ nwbfile.add_stimulus(acoustic_waveform_series)
 
 ### Visualization
 
-Use `plot_acoustic_waveform` on its own outside nwbwidgets.
+Use `plot_sound` on its own outside nwbwidgets.
 ```python
-from nwb_sound.widgets import plot_acoustic_waveform
+from ndx_sound.widgets import plot_sound
 
-plot_acoustic_waveform(nwbfile.stimulus["acoustic_stimulus"])
+plot_sound(nwbfile.stimulus["acoustic_stimulus"])
 ```
 
 ![](ndx_sound_plot.png)
