@@ -4,25 +4,64 @@ import librosa
 import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
+from IPython.core.display_functions import clear_output
 from IPython.display import Audio
 from ipywidgets import Output, VBox
+from ipywidgets.widgets.interaction import show_inline_matplotlib_plots
 from matplotlib.gridspec import GridSpec
 from nwbwidgets import default_neurodata_vis_spec
 from nwbwidgets.base import fig2widget
-from nwbwidgets.utils.timeseries import get_timeseries_tt
+from nwbwidgets.controllers import StartAndDurationController
+from nwbwidgets.timeseries import AbstractTraceWidget
+from nwbwidgets.utils.timeseries import (
+    get_timeseries_tt,
+    timeseries_time_to_ind,
+    get_timeseries_in_units,
+)
 from pynwb.file import TimeSeries
 
 from . import AcousticWaveformSeries
 
 
+class AcousticWaveformWidget(AbstractTraceWidget):
+    def __init__(
+            self,
+            acoustic_waveform_series: AcousticWaveformSeries,
+            foreign_time_window_controller: StartAndDurationController = None,
+            **kwargs
+    ):
+        super().__init__(
+            timeseries=acoustic_waveform_series,
+            foreign_time_window_controller=foreign_time_window_controller,
+            **kwargs,
+        )
+
+    def set_out_fig(self):
+        time_series = self.controls["timeseries"].value
+        time_window = self.controls["time_window"].value
+
+        self.out_fig = fig2widget(plot_sound(time_series, time_window))
+
+        def on_change(change):
+            time_window = self.controls["time_window"].value
+
+            with self.out_fig:
+                clear_output(wait=True)
+                plot_sound(time_series, time_window)
+                show_inline_matplotlib_plots()
+
+        self.controls["time_window"].observe(on_change)
+
+
 def plot_spectrogram(
-    time_series: TimeSeries,
-    n_fft: int = 1024,
-    ax: plt.Axes = None,
-    figsize: Tuple[int] = (8, 4),
-    cax: plt.Axes = None,
-    stft_kwargs: dict = None,
-    specshow_kwargs: dict = None,
+        time_series: TimeSeries,
+        time_window=None,
+        n_fft: int = 1024,
+        ax: plt.Axes = None,
+        figsize: Tuple[int] = (8, 4),
+        cax: plt.Axes = None,
+        stft_kwargs: dict = None,
+        specshow_kwargs: dict = None,
 ):
     """
     Plot spectrogram of sound.
@@ -57,12 +96,18 @@ def plot_spectrogram(
     else:
         fig = ax.figure
 
-    y = time_series.data[:].astype(float)
+    if time_window is not None:
+        istart = timeseries_time_to_ind(time_series, time_window[0])
+        istop = timeseries_time_to_ind(time_series, time_window[1])
+        data, units = get_timeseries_in_units(time_series, istart, istop)
+    else:
+        data = time_series.data[:].astype(float)
     sr = time_series.rate
+    starting_time = time_series.starting_time if time_window is None else time_window[0]
 
-    D = librosa.amplitude_to_db(np.abs(librosa.stft(y, n_fft=n_fft, **stft_kwargs)))
+    D = librosa.amplitude_to_db(np.abs(librosa.stft(data, n_fft=n_fft, **stft_kwargs)))
 
-    tt = np.arange(len(D.T)) / time_series.rate * n_fft / 4 + time_series.starting_time
+    tt = np.arange(len(D.T)) / time_series.rate * n_fft / 4 + starting_time
 
     img = librosa.display.specshow(
         D,
@@ -82,13 +127,14 @@ def plot_spectrogram(
     return ax
 
 
-def plot_waveform(time_series: TimeSeries, ax=None, figsize=(8, 4)):
+def plot_waveform(time_series: TimeSeries, time_window=None, ax=None, figsize=(8, 4)):
     """
     Plot waveform of sound
 
     Parameters
     ----------
     time_series
+    time_window
     ax
     figsize
 
@@ -99,10 +145,16 @@ def plot_waveform(time_series: TimeSeries, ax=None, figsize=(8, 4)):
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
 
-    y = time_series.data[:]
-    tt = get_timeseries_tt(time_series)
+    if time_window is not None:
+        istart = timeseries_time_to_ind(time_series, time_window[0])
+        istop = timeseries_time_to_ind(time_series, time_window[1])
+        data, units = get_timeseries_in_units(time_series, istart, istop)
+        tt = get_timeseries_tt(time_series, istart, istop)
+    else:
+        data = time_series.data[:]
+        tt = get_timeseries_tt(time_series)
 
-    ax.plot(tt, y, "k")
+    ax.plot(tt, data, "k")
 
     ax.axis("off")
     ax.autoscale(enable=True, axis="x", tight=True)
@@ -110,7 +162,7 @@ def plot_waveform(time_series: TimeSeries, ax=None, figsize=(8, 4)):
     return ax
 
 
-def plot_sound(time_series: TimeSeries, figsize=None, **kwargs):
+def plot_sound(time_series: TimeSeries, time_window=None, figsize=None, **kwargs):
     """
     Figure for waveform and spectrogram
 
@@ -138,12 +190,12 @@ def plot_sound(time_series: TimeSeries, figsize=None, **kwargs):
 
     ax1 = fig.add_subplot(gs[0, 0])
 
-    plot_waveform(time_series, ax=ax1)
+    plot_waveform(time_series, time_window=time_window, ax=ax1)
 
     ax2 = fig.add_subplot(gs[1, 0])
     cax = fig.add_subplot(gs[1, 1])
 
-    plot_spectrogram(time_series, ax=ax2, cax=cax, **kwargs)
+    plot_spectrogram(time_series, time_window=time_window, ax=ax2, cax=cax, **kwargs)
 
     return fig
 
