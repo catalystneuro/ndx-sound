@@ -263,4 +263,4 @@ def acoustic_waveform_widget(time_series: TimeSeries, time_window=None, **kwargs
     )
 
 
-default_neurodata_vis_spec.update({AcousticWaveformSeries: acoustic_waveform_widget})
+default_neurodata_vis_spec.update({AcousticWaveformSeries: AcousticWaveformWidget})
