@@ -9,6 +9,7 @@ from IPython.display import Audio
 from ipywidgets import Output, VBox
 from ipywidgets.widgets.interaction import show_inline_matplotlib_plots
 from matplotlib.gridspec import GridSpec
+from matplotlib.ticker import FormatStrFormatter
 from nwbwidgets import default_neurodata_vis_spec
 from nwbwidgets.base import fig2widget
 from nwbwidgets.controllers import StartAndDurationController
@@ -121,6 +122,7 @@ def plot_spectrogram(
     )
 
     ax.set_xlabel("time (s)")
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
     fig.colorbar(img, ax=ax, format="%+2.f dB", cax=cax)
 
