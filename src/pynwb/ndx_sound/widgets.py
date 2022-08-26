@@ -67,6 +67,7 @@ def plot_spectrogram(
         cax: plt.Axes = None,
         stft_kwargs: dict = None,
         specshow_kwargs: dict = None,
+        **kwargs,
 ):
     """
     Plot spectrogram of sound.
