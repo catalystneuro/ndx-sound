@@ -122,7 +122,7 @@ def plot_spectrogram(
     )
 
     ax.set_xlabel("time (s)")
-    ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 
     fig.colorbar(img, ax=ax, format="%+2.f dB", cax=cax)
 
