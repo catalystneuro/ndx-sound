@@ -123,6 +123,7 @@ def plot_spectrogram(
 
     ax.set_xlabel("time (s)")
     ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    ax.tick_params(axis='x', labelrotation=45)
 
     fig.colorbar(img, ax=ax, format="%+2.f dB", cax=cax)
 
