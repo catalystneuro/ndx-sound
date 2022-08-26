@@ -4,7 +4,7 @@ import librosa
 import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
-from IPython.core.display_functions import clear_output
+from IPython.core.display_functions import clear_output, display
 from IPython.display import Audio
 from ipywidgets import Output, VBox
 from ipywidgets.widgets.interaction import show_inline_matplotlib_plots
@@ -41,15 +41,19 @@ class AcousticWaveformWidget(AbstractTraceWidget):
         time_series = self.controls["timeseries"].value
         time_window = self.controls["time_window"].value
 
-        self.out_fig = fig2widget(plot_sound(time_series, time_window))
+        self.out_fig = acoustic_waveform_widget(time_series, time_window)
 
         def on_change(change):
             time_window = self.controls["time_window"].value
 
-            with self.out_fig:
+            with self.out_fig.children[0]:
                 clear_output(wait=True)
                 plot_sound(time_series, time_window)
                 show_inline_matplotlib_plots()
+
+            with self.out_fig.children[1]:
+                clear_output(wait=True)
+                display(play_sound(time_series, time_window))
 
         self.controls["time_window"].observe(on_change)
 
@@ -70,6 +74,7 @@ def plot_spectrogram(
     Parameters
     ----------
     time_series: pynwb.file.TimeSeries
+    time_window: tuple, optional
     n_fft: int, optional
         Default is 1024
     ax: plt.Axes
@@ -203,29 +208,40 @@ def plot_sound(time_series: TimeSeries, time_window=None, figsize=None, **kwargs
     return fig
 
 
-def play_sound_widget(time_series: TimeSeries):
+def play_sound(time_series: TimeSeries, time_window=None):
+    """Returns the Audio widget."""
+
+    if time_window is not None:
+        istart = timeseries_time_to_ind(time_series, time_window[0])
+        istop = timeseries_time_to_ind(time_series, time_window[1])
+        data, units = get_timeseries_in_units(time_series, istart, istop)
+    else:
+        data = time_series.data[:].astype(float)
+    sr = time_series.rate
+
+    return Audio(data, rate=sr)
+
+
+def play_sound_widget(time_series: TimeSeries, time_window=None):
     """
     Widget for playing sound.
 
     Parameters
     ----------
     time_series
+    time_window
 
     Returns
     -------
 
     """
-
-    y = time_series.data[:].astype(float)
-    sr = time_series.rate
-
     out = Output()
-    out.append_display_data(Audio(y, rate=sr))
-
+    with out:
+        display(play_sound(time_series, time_window))
     return out
 
 
-def acoustic_waveform_widget(time_series: TimeSeries, **kwargs):
+def acoustic_waveform_widget(time_series: TimeSeries, time_window=None, **kwargs):
     """
     Entire widget, with waveform, spectrogram, and sound.
 
@@ -241,8 +257,8 @@ def acoustic_waveform_widget(time_series: TimeSeries, **kwargs):
 
     return VBox(
         [
-            fig2widget(plot_sound(time_series, **kwargs)),
-            play_sound_widget(time_series),
+            fig2widget(plot_sound(time_series, time_window, **kwargs)),
+            play_sound_widget(time_series, time_window),
         ]
     )
 
