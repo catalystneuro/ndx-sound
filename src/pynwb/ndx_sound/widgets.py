@@ -10,7 +10,6 @@ from ipywidgets import Output, VBox
 from ipywidgets.widgets.interaction import show_inline_matplotlib_plots
 from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import FormatStrFormatter
-from nwbwidgets import default_neurodata_vis_spec
 from nwbwidgets.base import fig2widget
 from nwbwidgets.controllers import StartAndDurationController
 from nwbwidgets.timeseries import AbstractTraceWidget
@@ -264,4 +263,9 @@ def acoustic_waveform_widget(time_series: TimeSeries, time_window=None, **kwargs
     )
 
 
-default_neurodata_vis_spec.update({AcousticWaveformSeries: AcousticWaveformWidget})
+def load_widgets():
+    """Load AcousticWaveformWidget into nwbwidgets, to use as default visualization
+    for AcousticWaveformSeries data."""
+    from nwbwidgets import default_neurodata_vis_spec
+
+    default_neurodata_vis_spec.update({AcousticWaveformSeries: AcousticWaveformWidget})
