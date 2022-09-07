@@ -22,7 +22,7 @@ except Exception:
 
 setup_args = {
     'name': 'ndx-sound',
-    'version': '0.1.0',
+    'version': '0.2.0',
     'description': 'Represent acoustic stimuli and responses',
     'long_description': readme,
     'long_description_content_type': readme_type,
