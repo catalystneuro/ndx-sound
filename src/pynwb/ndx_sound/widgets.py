@@ -113,7 +113,7 @@ def plot_spectrogram(
 
     D = librosa.amplitude_to_db(np.abs(librosa.stft(data, n_fft=n_fft, **stft_kwargs)))
 
-    tt = np.arange(len(D.T)) / time_series.rate * n_fft / 4 + starting_time
+    tt = np.arange(len(D.T)) / sr * n_fft / 4 + starting_time
 
     img = librosa.display.specshow(
         D,
