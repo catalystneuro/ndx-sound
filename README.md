@@ -1,6 +1,6 @@
 # ndx-sound Extension for NWB
 
-NWB extension of sounds.
+NWB extension for sounds.
 
 ## Installation
 
