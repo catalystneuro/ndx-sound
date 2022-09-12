@@ -1,3 +1,5 @@
+![PyPI](https://img.shields.io/pypi/v/ndx-sound?color=blue)
+
 # ndx-sound Extension for NWB
 
 NWB extension of sounds.
