@@ -10,7 +10,7 @@ from ndx_sound.widgets import AcousticWaveformWidget
 
 class TestAcousticWaveformSeriesConstructor(TestCase):
     def test_constructor(self):
-        """Test that the constructor for TetrodeSeries sets values as expected."""
+        """Test that the constructor for AcousticWaveformSeries sets values as expected."""
 
         valid_shapes = (
             (100,),
@@ -34,7 +34,7 @@ class TestAcousticWaveformSeriesConstructor(TestCase):
             self.assertEqual(acoustic_waveform_series.unit, "n.a.")
 
 
-class TestAcousticWaveforSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
+class TestAcousticWaveformSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
     def setUpContainer(self):
         """Return the test AcousticWaveformSeries to read/write"""
         acoustic_waveform_series = AcousticWaveformSeries(
