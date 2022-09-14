@@ -1,7 +1,7 @@
 from typing import Tuple
 
-import librosa
-import librosa.display
+from librosa import amplitude_to_db, stft
+from librosa import display as librosa_display
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.core.display_functions import clear_output, display
@@ -111,11 +111,11 @@ def plot_spectrogram(
     sr = time_series.rate
     starting_time = time_series.starting_time if time_window is None else time_window[0]
 
-    D = librosa.amplitude_to_db(np.abs(librosa.stft(data, n_fft=n_fft, **stft_kwargs)))
+    D = amplitude_to_db(np.abs(stft(data, n_fft=n_fft, **stft_kwargs)))
 
     tt = np.arange(len(D.T)) / sr * n_fft / 4 + starting_time
 
-    img = librosa.display.specshow(
+    img = librosa_display.specshow(
         D,
         y_axis="log",
         x_axis="time",
