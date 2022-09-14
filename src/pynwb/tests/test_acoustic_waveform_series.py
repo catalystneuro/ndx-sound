@@ -2,8 +2,6 @@ import numpy as np
 from pynwb.testing import AcquisitionH5IOMixin, TestCase
 from nwbwidgets.controllers import StartAndDurationController
 
-from pynwb.testing import TestCase
-
 from ndx_sound import AcousticWaveformSeries
 from ndx_sound.widgets import AcousticWaveformWidget
 
