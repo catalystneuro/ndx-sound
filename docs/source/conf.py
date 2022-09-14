@@ -72,7 +72,6 @@ html_static_path = ['_static']
 
 # -- Options for intersphinx extension ---------------------------------------
 
-intersphinx_mapping = {
 ############################################################################
 #  CUSTOM CONFIGURATIONS ADDED BY THE NWB TOOL FOR GENERATING FORMAT DOCS
 ###########################################################################
