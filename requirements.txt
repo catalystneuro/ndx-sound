@@ -1,5 +1,4 @@
 # pinned dependencies to reproduce a working development environment
 hdmf>=3.1.1
 pynwb>=2.0.0
-librosa>=0.9.2
 nwbwidgets>=0.8.0
