@@ -1,12 +1,14 @@
 import numpy as np
 from pynwb.testing import AcquisitionH5IOMixin, TestCase
+from nwbwidgets.controllers import StartAndDurationController
 
 from ndx_sound import AcousticWaveformSeries
+from ndx_sound.widgets import AcousticWaveformWidget
 
 
 class TestAcousticWaveformSeriesConstructor(TestCase):
     def test_constructor(self):
-        """Test that the constructor for TetrodeSeries sets values as expected."""
+        """Test that the constructor for AcousticWaveformSeries sets values as expected."""
 
         valid_shapes = (
             (100,),
@@ -30,7 +32,7 @@ class TestAcousticWaveformSeriesConstructor(TestCase):
             self.assertEqual(acoustic_waveform_series.unit, "n.a.")
 
 
-class TestAcousticWaveforSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
+class TestAcousticWaveformSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
     def setUpContainer(self):
         """Return the test AcousticWaveformSeries to read/write"""
         acoustic_waveform_series = AcousticWaveformSeries(
@@ -40,3 +42,17 @@ class TestAcousticWaveforSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
             description="acoustic stimulus description",
         )
         return acoustic_waveform_series
+
+
+class TestAcousticWaveformSeriesWidget(TestCase):
+    def test_AcousticWaveformWidget_with_time_window_controller(self):
+        data = np.random.randint(1000, size=(10000,))
+        acoustic_waveform_series = AcousticWaveformSeries(
+            name="acoustic_stimulus",
+            data=data,
+            rate=42000.0,
+            description="acoustic stimulus description",
+        )
+
+        controller = StartAndDurationController(tmin=0.1, tmax=0.3)
+        AcousticWaveformWidget(acoustic_waveform_series, controller)
