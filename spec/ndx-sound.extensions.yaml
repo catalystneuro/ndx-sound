@@ -1,4 +1,34 @@
 groups:
+- neurodata_type_def: Speaker
+  neurodata_type_inc: Device
+  doc: Speaker device used for acoustic stimuli
+  datasets:
+  - name: frequency_range_in_hz
+    dtype: float
+    shape:
+    - 2
+    doc: Frequency range of the speaker in Hz
+  - name: sensitivity_in_db
+    dtype: float
+    doc: Sensitivity of the speaker in dB at 1m
+  - name: location
+    dtype: text
+    doc: Location of the speaker
+- neurodata_type_def: Microphone
+  neurodata_type_inc: Device
+  doc: Microphone device used for acoustic recordings
+  datasets:
+  - name: frequency_range_in_hz
+    dtype: float
+    shape:
+    - 2
+    doc: Frequency range of the microphone in Hz
+  - name: sensitivity_in_mv_per_pa
+    dtype: float
+    doc: Sensitivity of the microphone in mV/Pa
+  - name: location
+    dtype: text
+    doc: Location of the microphone
 - neurodata_type_def: AcousticWaveformSeries
   neurodata_type_inc: TimeSeries
   doc: single or multi-channel acoustic series
@@ -31,3 +61,17 @@ groups:
     - name: rate
       dtype: float
       doc: sampling frequency of acoustic waveform.
+- neurodata_type_def: AcousticStimulusSeries
+  neurodata_type_inc: AcousticWaveformSeries
+  doc: Waveform of acoustic stimulus
+  links:
+  - name: speaker
+    target_type: Speaker
+    doc: Link to the speaker device used for the stimulus.
+- neurodata_type_def: AcousticRecordingSeries
+  neurodata_type_inc: AcousticWaveformSeries
+  doc: Waveform of acoustic recording
+  links:
+  - name: microphone
+    target_type: Microphone
+    doc: Link to the microphone device used for the recording.

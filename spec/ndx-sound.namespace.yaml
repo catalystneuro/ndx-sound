@@ -9,5 +9,6 @@ namespaces:
   - namespace: core
     neurodata_types:
     - TimeSeries
+    - Device
   - source: ndx-sound.extensions.yaml
   version: 0.1.0
