@@ -28,8 +28,13 @@ load_namespaces(ndx_sound_specpath)
 AcousticWaveformSeries = get_class("AcousticWaveformSeries", "ndx-sound")
 Speaker = get_class("Speaker", "ndx-sound")
 Microphone = get_class("Microphone", "ndx-sound")
+AudioInterface = get_class("AudioInterface", "ndx-sound")
+MicrophoneTable = get_class("MicrophoneTable", "ndx-sound")
+SpeakerTable = get_class("SpeakerTable", "ndx-sound")
+AcousticLabMetaData = get_class("AcousticLabMetaData", "ndx-sound")
 AcousticStimulusSeries = get_class("AcousticStimulusSeries", "ndx-sound")
 AcousticRecordingSeries = get_class("AcousticRecordingSeries", "ndx-sound")
+
 
 # set default value for data_unit
 for i, arg in enumerate(AcousticWaveformSeries.__init__.__docval__["args"]):

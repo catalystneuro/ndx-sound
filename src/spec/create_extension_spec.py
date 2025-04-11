@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os.path
 
-from pynwb.spec import NWBNamespaceBuilder, export_spec, NWBGroupSpec, NWBDatasetSpec, NWBAttributeSpec, NWBLinkSpec
+from pynwb.spec import NWBNamespaceBuilder, export_spec, NWBGroupSpec, NWBDatasetSpec, NWBAttributeSpec, NWBLinkSpec, NWBRefSpec
 # from pynwb.spec import NWBDatasetSpec, NWBLinkSpec, NWBDtypeSpec, NWBRefSpec, NWBAttributeSpec
 
 
@@ -22,6 +22,9 @@ def main():
     # included.
     ns_builder.include_type('TimeSeries', namespace='core')
     ns_builder.include_type('Device', namespace='core')
+    ns_builder.include_type('DynamicTable', namespace='core')
+    ns_builder.include_type('DynamicTableRegion', namespace='core')
+    ns_builder.include_type('LabMetaData', namespace='core')
 
     # see https://pynwb.readthedocs.io/en/latest/extensions.html#extending-nwb
     # for more information
@@ -61,7 +64,7 @@ def main():
                 ]
             )
         ],
-    )
+    ) 
 
     speaker = NWBGroupSpec(
         neurodata_type_def='Speaker',
@@ -78,11 +81,6 @@ def main():
                 name="sensitivity_in_db",
                 doc="Sensitivity of the speaker in dB at 1m",
                 dtype="float",
-            ),
-            NWBDatasetSpec(
-                name="location",
-                doc="Location of the speaker",
-                dtype="text",
             ),
         ]
     )
@@ -103,23 +101,95 @@ def main():
                 doc="Sensitivity of the microphone in mV/Pa",
                 dtype="float",
             ),
+        ]
+    )
+
+    audio_interface = NWBGroupSpec(
+        neurodata_type_def='AudioInterface',
+        neurodata_type_inc='Device',
+        doc="Audio interface device used for acoustic recordings",
+        datasets=[
             NWBDatasetSpec(
-                name="location",
-                doc="Location of the microphone",
-                dtype="text",
+                name="signal_to_noise_ratio_in_db",
+                doc="Signal-to-noise ratio of the audio interface in dB",
+                dtype="float",
+            ),
+            NWBDatasetSpec(
+                name="channel_separation_in_db",
+                doc="Channel separation of the audio interface in dB",
+                dtype="float",
             ),
         ]
+    )
+
+    microphone_table = NWBGroupSpec(
+        neurodata_type_def="MicrophoneTable",
+        neurodata_type_inc="DynamicTable",
+        doc="Extends DynamicTable to hold metadata on the auditory recording system.",
+        datasets=[
+            NWBDatasetSpec(
+                name="location",
+                doc="Location of microphone.",
+                dtype="text",
+                shape=(None,),
+                neurodata_type_inc="VectorData",
+            ),
+            NWBDatasetSpec(
+                name="microphone",
+                doc="Link to microphone object.",
+                dtype=NWBRefSpec(target_type='Device', reftype="object"),
+                shape=(None,),
+                neurodata_type_inc="VectorData",
+            ),
+            NWBDatasetSpec(
+                name="audio_interface",
+                doc="Link to audio interface object.",
+                dtype=NWBRefSpec(target_type='Device', reftype="object"),
+                shape=(None,),
+                neurodata_type_inc="VectorData",
+            ),
+        ],
+    )
+
+    speaker_table = NWBGroupSpec(
+        neurodata_type_def="SpeakerTable",
+        neurodata_type_inc="DynamicTable",
+        doc="Extends DynamicTable to hold metadata on the auditory stimulus system.",
+        datasets=[
+            NWBDatasetSpec(
+                name="location",
+                doc="Location of speaker.",
+                dtype="text",
+                shape=(None,),
+                neurodata_type_inc="VectorData",
+            ),
+            NWBDatasetSpec(
+                name="speaker",
+                doc="Link to speaker object.",
+                dtype=NWBRefSpec(target_type='Device', reftype="object"),
+                shape=(None,),
+                neurodata_type_inc="VectorData",
+            ),
+            NWBDatasetSpec(
+                name="audio_interface",
+                doc="Link to audio interface object.",
+                dtype=NWBRefSpec(target_type='Device', reftype="object"),
+                shape=(None,),
+                neurodata_type_inc="VectorData",
+            ),
+        ],
     )
 
     acoustic_stimulus_series = NWBGroupSpec(
         neurodata_type_def='AcousticStimulusSeries',
         neurodata_type_inc='AcousticWaveformSeries',
         doc="Waveform of acoustic stimulus",
-        links=[
-            NWBLinkSpec(
-                name="speaker",
-                target_type="Speaker",
-                doc="Link to the speaker device used for the stimulus.",
+        datasets=[
+            NWBDatasetSpec(
+                name="speaker_table_region",
+                doc="References row(s) of SpeakTable.",
+                neurodata_type_inc="DynamicTableRegion",
+                quantity="?",
             )
         ]
     )
@@ -128,16 +198,45 @@ def main():
         neurodata_type_def='AcousticRecordingSeries',
         neurodata_type_inc='AcousticWaveformSeries',
         doc="Waveform of acoustic recording",
-        links=[
-            NWBLinkSpec(
-                name="microphone",
-                target_type="Microphone",
-                doc="Link to the microphone device used for the recording.",
+        datasets=[
+            NWBDatasetSpec(
+                name="microphone_table_region",
+                doc="References row(s) of MicrophoneTable.",
+                neurodata_type_inc="DynamicTableRegion",
+                quantity="?",
             )
-        ]
+        ]   
     )
 
-    new_data_types = [speaker, microphone, acoustic_waveform_series, acoustic_stimulus_series, acoustic_recording_series]
+    acoustic_lab_meta_data = NWBGroupSpec(
+        neurodata_type_def="AcousticLabMetaData",
+        neurodata_type_inc="LabMetaData",
+        doc="Extends LabMetaData to hold all acoustic metadata.",
+        groups=[
+            NWBGroupSpec(
+                neurodata_type_inc="MicrophoneTable",
+                doc="Table of microphones used for acoustic recordings.",
+                quantity="?",
+            ),
+            NWBGroupSpec(
+                neurodata_type_inc="SpeakerTable",
+                doc="Table of speakers used for acoustic stimuli.",
+                quantity="?",
+            ),
+        ],
+    )
+
+    new_data_types = [
+        speaker,
+        microphone,
+        audio_interface,
+        microphone_table,
+        speaker_table,
+        acoustic_lab_meta_data,
+        acoustic_waveform_series,
+        acoustic_stimulus_series,
+        acoustic_recording_series,
+    ]
 
     # export the spec to yaml files in the spec folder
     output_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'spec'))
