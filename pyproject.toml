@@ -1,0 +1,97 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ndx-sound"
+version = "0.2.1"
+authors = [
+    { name="Ben Dichter", email="ben.dichter@catalystneuro.com" },
+]
+description = "Represent acoustic stimuli and responses"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "BSD-3"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+keywords = [
+    'NeurodataWithoutBorders',
+    'NWB',
+    'nwb-extension',
+    'ndx-extension',
+]
+dependencies = [
+    "pynwb>=1.5.0",
+    "hdmf>=2.5.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==6.2.5",
+    "pytest-subtests==0.6.0",
+    "hdmf-docutils==0.4.4",
+]
+widgets = [
+    "nwbwidgets>=0.8.0",
+    "ipyvolume==0.6.0a10;python_version>='3.10'",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/catalystneuro/ndx-sound"
+"Bug Tracker" = "https://github.com/catalystneuro/ndx-sound/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/pynwb/ndx_sound",
+    "spec",
+]
+
+[tool.hatch.build.targets.wheel.sources]
+"spec" = "ndx_sound/spec"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/pynwb",
+    "spec/ndx-sound.extensions.yaml",
+    "spec/ndx-sound.namespace.yaml",
+    "docs",
+]
+exclude = [
+    ".git*",
+    "src/matnwb",
+]
+
+
+
+[tool.black]
+line-length = 120
+preview = true
+exclude = ".git|.mypy_cache|.tox|.venv|venv|.ipynb_checkpoints|_build/|dist/|__pypackages__|.ipynb|docs/"
+
+[tool.ruff]
+exclude = [
+  ".git",
+  ".tox",
+  "__pycache__",
+  "build/",
+  "dist/",
+]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "T100", "T201", "T203"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/spec/create_extension_spec.py" = ["T201"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 17
