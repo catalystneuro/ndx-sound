@@ -1,4 +1,100 @@
 groups:
+- neurodata_type_def: Speaker
+  neurodata_type_inc: Device
+  doc: Speaker device used for acoustic stimuli
+  datasets:
+  - name: frequency_range_in_hz
+    dtype: float
+    shape:
+    - 2
+    doc: Frequency range of the speaker in Hz
+  - name: sensitivity_in_db
+    dtype: float
+    doc: Sensitivity of the speaker in dB at 1m
+- neurodata_type_def: Microphone
+  neurodata_type_inc: Device
+  doc: Microphone device used for acoustic recordings
+  datasets:
+  - name: frequency_range_in_hz
+    dtype: float
+    shape:
+    - 2
+    doc: Frequency range of the microphone in Hz
+  - name: sensitivity_in_mv_per_pa
+    dtype: float
+    doc: Sensitivity of the microphone in mV/Pa
+- neurodata_type_def: AudioInterfaceDevice
+  neurodata_type_inc: Device
+  doc: Audio interface device used for acoustic recordings
+  datasets:
+  - name: signal_to_noise_ratio_in_db
+    dtype: float
+    doc: Signal-to-noise ratio of the audio interface in dB
+  - name: channel_separation_in_db
+    dtype: float
+    doc: Channel separation of the audio interface in dB
+- neurodata_type_def: MicrophoneTable
+  neurodata_type_inc: DynamicTable
+  doc: Extends DynamicTable to hold metadata on the auditory recording system.
+  datasets:
+  - name: location
+    neurodata_type_inc: VectorData
+    dtype: text
+    shape:
+    - null
+    doc: Location of microphone.
+  - name: microphone
+    neurodata_type_inc: VectorData
+    dtype:
+      target_type: Microphone
+      reftype: object
+    shape:
+    - null
+    doc: Link to microphone object.
+  - name: audio_interface_device
+    neurodata_type_inc: VectorData
+    dtype:
+      target_type: AudioInterfaceDevice
+      reftype: object
+    shape:
+    - null
+    doc: Link to audio interface device object.
+- neurodata_type_def: SpeakerTable
+  neurodata_type_inc: DynamicTable
+  doc: Extends DynamicTable to hold metadata on the auditory stimulus system.
+  datasets:
+  - name: location
+    neurodata_type_inc: VectorData
+    dtype: text
+    shape:
+    - null
+    doc: Location of speaker.
+  - name: speaker
+    neurodata_type_inc: VectorData
+    dtype:
+      target_type: Speaker
+      reftype: object
+    shape:
+    - null
+    doc: Link to speaker object.
+  - name: audio_interface_device
+    neurodata_type_inc: VectorData
+    dtype:
+      target_type: AudioInterfaceDevice
+      reftype: object
+    shape:
+    - null
+    doc: Link to audio interface device object.
+- neurodata_type_def: AcousticLabMetaData
+  neurodata_type_inc: LabMetaData
+  doc: Extends LabMetaData to hold all acoustic metadata.
+  groups:
+  - neurodata_type_inc: MicrophoneTable
+    doc: Table of microphones used for acoustic recordings.
+    quantity: '?'
+  - neurodata_type_inc: SpeakerTable
+    doc: Table of speakers used for acoustic stimuli.
+    quantity: '?'
 - neurodata_type_def: AcousticWaveformSeries
   neurodata_type_inc: TimeSeries
   doc: single or multi-channel acoustic series
@@ -31,3 +127,19 @@ groups:
     - name: rate
       dtype: float
       doc: sampling frequency of acoustic waveform.
+- neurodata_type_def: AcousticStimulusSeries
+  neurodata_type_inc: AcousticWaveformSeries
+  doc: Waveform of acoustic stimulus
+  datasets:
+  - name: speaker_table_region
+    neurodata_type_inc: DynamicTableRegion
+    doc: References row(s) of SpeakTable.
+    quantity: '?'
+- neurodata_type_def: AcousticRecordingSeries
+  neurodata_type_inc: AcousticWaveformSeries
+  doc: Waveform of acoustic recording
+  datasets:
+  - name: microphone_table_region
+    neurodata_type_inc: DynamicTableRegion
+    doc: References row(s) of MicrophoneTable.
+    quantity: '?'

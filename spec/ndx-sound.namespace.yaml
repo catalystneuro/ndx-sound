@@ -9,5 +9,9 @@ namespaces:
   - namespace: core
     neurodata_types:
     - TimeSeries
+    - Device
+    - DynamicTable
+    - DynamicTableRegion
+    - LabMetaData
   - source: ndx-sound.extensions.yaml
   version: 0.1.0
