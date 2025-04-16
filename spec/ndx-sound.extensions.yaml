@@ -23,7 +23,7 @@ groups:
   - name: sensitivity_in_mv_per_pa
     dtype: float
     doc: Sensitivity of the microphone in mV/Pa
-- neurodata_type_def: AudioInterface
+- neurodata_type_def: AudioInterfaceDevice
   neurodata_type_inc: Device
   doc: Audio interface device used for acoustic recordings
   datasets:
@@ -46,19 +46,19 @@ groups:
   - name: microphone
     neurodata_type_inc: VectorData
     dtype:
-      target_type: Device
+      target_type: Microphone
       reftype: object
     shape:
     - null
     doc: Link to microphone object.
-  - name: audio_interface
+  - name: audio_interface_device
     neurodata_type_inc: VectorData
     dtype:
-      target_type: Device
+      target_type: AudioInterfaceDevice
       reftype: object
     shape:
     - null
-    doc: Link to audio interface object.
+    doc: Link to audio interface device object.
 - neurodata_type_def: SpeakerTable
   neurodata_type_inc: DynamicTable
   doc: Extends DynamicTable to hold metadata on the auditory stimulus system.
@@ -72,19 +72,19 @@ groups:
   - name: speaker
     neurodata_type_inc: VectorData
     dtype:
-      target_type: Device
+      target_type: Speaker
       reftype: object
     shape:
     - null
     doc: Link to speaker object.
-  - name: audio_interface
+  - name: audio_interface_device
     neurodata_type_inc: VectorData
     dtype:
-      target_type: Device
+      target_type: AudioInterfaceDevice
       reftype: object
     shape:
     - null
-    doc: Link to audio interface object.
+    doc: Link to audio interface device object.
 - neurodata_type_def: AcousticLabMetaData
   neurodata_type_inc: LabMetaData
   doc: Extends LabMetaData to hold all acoustic metadata.
