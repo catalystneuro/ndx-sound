@@ -104,8 +104,8 @@ def main():
         ]
     )
 
-    audio_interface = NWBGroupSpec(
-        neurodata_type_def='AudioInterface',
+    audio_interface_device = NWBGroupSpec(
+        neurodata_type_def='AudioInterfaceDevice',
         neurodata_type_inc='Device',
         doc="Audio interface device used for acoustic recordings",
         datasets=[
@@ -229,7 +229,7 @@ def main():
     new_data_types = [
         speaker,
         microphone,
-        audio_interface,
+        audio_interface_device,
         microphone_table,
         speaker_table,
         acoustic_lab_meta_data,
