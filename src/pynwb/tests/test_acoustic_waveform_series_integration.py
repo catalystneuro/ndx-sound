@@ -8,16 +8,12 @@ from datetime import datetime
 
 from ndx_sound import AcousticWaveformSeries
 from ndx_sound.testing.mock import mock_AcousticWaveformSeries
-
+from pynwb.testing.mock.file import mock_NWBFile
 
 def test_add_to_acquisition(tmp_path):
     """Test adding an AcousticWaveformSeries to the acquisition field of an NWBFile."""
     # Create NWBFile
-    nwbfile = NWBFile(
-        session_description="Test session",
-        identifier="TEST123",
-        session_start_time=datetime.now(),
-    )
+    nwbfile = mock_NWBFile()
     
     # Create test data
     acoustic_waveform_series = mock_AcousticWaveformSeries()
@@ -42,11 +38,7 @@ def test_add_to_acquisition(tmp_path):
 def test_add_to_stimulus(tmp_path):
     """Test adding an AcousticWaveformSeries to the stimulus field of an NWBFile."""
     # Create NWBFile
-    nwbfile = NWBFile(
-        session_description="Test session",
-        identifier="TEST123",
-        session_start_time=datetime.now(),
-    )
+    nwbfile = mock_NWBFile()
     
     # Create test data
     acoustic_waveform_series = mock_AcousticWaveformSeries()
@@ -71,11 +63,7 @@ def test_add_to_stimulus(tmp_path):
 def test_add_to_processing_module(tmp_path):
     """Test adding an AcousticWaveformSeries to a processing module of an NWBFile."""
     # Create NWBFile
-    nwbfile = NWBFile(
-        session_description="Test session",
-        identifier="TEST123",
-        session_start_time=datetime.now(),
-    )
+    nwbfile = mock_NWBFile()
     
     # Create test data
     acoustic_waveform_series = mock_AcousticWaveformSeries()
@@ -104,11 +92,7 @@ def test_add_to_processing_module(tmp_path):
 def test_multiple_acoustic_waveform_series(tmp_path):
     """Test adding multiple AcousticWaveformSeries to an NWBFile."""
     # Create NWBFile
-    nwbfile = NWBFile(
-        session_description="Test session",
-        identifier="TEST123",
-        session_start_time=datetime.now(),
-    )
+    nwbfile = mock_NWBFile()
     
     # Add to acquisition
     aws1 = mock_AcousticWaveformSeries(name="aws1")
