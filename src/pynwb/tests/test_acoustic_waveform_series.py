@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 import os
-from pynwb import NWBHDF5IO, NWBFile
-from datetime import datetime
+from pynwb import NWBHDF5IO
+from pynwb.testing.mock.file import mock_NWBFile
 
 from ndx_sound import AcousticWaveformSeries
 from ndx_sound.testing.mock import mock_AcousticWaveformSeries
@@ -94,12 +94,7 @@ def test_mock_acoustic_waveform_series():
 def test_roundtrip(tmp_path):
     """Test roundtrip serialization/deserialization."""
     # Create NWBFile
-    nwbfile = NWBFile(
-        session_description="Test session",
-        identifier="TEST123",
-        session_start_time=datetime.now(),
-    )
-    
+    nwbfile = mock_NWBFile()
     # Create test data
     acoustic_waveform_series = mock_AcousticWaveformSeries(
         data_shape=(100, 2),

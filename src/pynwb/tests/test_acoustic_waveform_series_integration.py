@@ -1,10 +1,8 @@
 """Integration tests for AcousticWaveformSeries."""
 
-import os
 import numpy as np
 import pytest
-from pynwb import NWBHDF5IO, NWBFile
-from datetime import datetime
+from pynwb import NWBHDF5IO
 
 from ndx_sound import AcousticWaveformSeries
 from ndx_sound.testing.mock import mock_AcousticWaveformSeries
