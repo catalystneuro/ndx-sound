@@ -1,21 +1,57 @@
 import numpy as np
+from pynwb.testing import AcquisitionH5IOMixin, TestCase
 import pytest
-import os
-from pynwb import NWBHDF5IO
-from pynwb.testing.mock.file import mock_NWBFile
 
 from ndx_sound import AcousticWaveformSeries
 from ndx_sound.testing.mock import mock_AcousticWaveformSeries
 
 
-def test_constructor():
-    """Test that the constructor for AcousticWaveformSeries sets values as expected."""
-    valid_shapes = (
-        (100,),
-        (100, 1),
-        (100, 2),
-    )
-    for data in (np.random.randint(1000, size=size) for size in valid_shapes):
+class TestAcousticWaveformSeriesConstructor(TestCase):
+    def test_constructor(self):
+        """Test that the constructor for AcousticWaveformSeries sets values as expected."""
+
+        valid_shapes = (
+            (100,),
+            (100, 1),
+            (100, 2),
+        )
+        for data in (np.random.randint(1000, size=size) for size in valid_shapes):
+            acoustic_waveform_series = AcousticWaveformSeries(
+                name="acoustic_stimulus",
+                data=data,
+                rate=42000.0,
+                description="acoustic stimulus description",
+            )
+
+            self.assertEqual(acoustic_waveform_series.name, "acoustic_stimulus")
+            self.assertEqual(
+                acoustic_waveform_series.description, "acoustic stimulus description"
+            )
+            np.testing.assert_array_equal(acoustic_waveform_series.data, data)
+            self.assertEqual(acoustic_waveform_series.rate, 42000.0)
+            self.assertEqual(acoustic_waveform_series.unit, "n.a.")
+
+
+class TestAcousticWaveformSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
+    def setUpContainer(self):
+        """Return the test AcousticWaveformSeries to read/write"""
+        acoustic_waveform_series = AcousticWaveformSeries(
+            name="acoustic_stimulus",
+            data=np.random.randint(1000, size=(100, 2)),
+            rate=42000.0,
+            description="acoustic stimulus description",
+        )
+        return acoustic_waveform_series
+
+
+class TestAcousticWaveformSeriesWidget(TestCase):
+    def test_AcousticWaveformWidget_with_time_window_controller(self):
+        nwbwidgets = pytest.importorskip("nwbwidgets", reason="nwbwidgets not installed")
+        librosa = pytest.importorskip("librosa", reason="librosa not installed")
+        from nwbwidgets.controllers import StartAndDurationController
+        from ndx_sound.widgets import AcousticWaveformWidget
+
+        data = np.random.randint(1000, size=(10000,))
         acoustic_waveform_series = AcousticWaveformSeries(
             name="acoustic_stimulus",
             data=data,
@@ -23,11 +59,8 @@ def test_constructor():
             description="acoustic stimulus description",
         )
 
-        assert acoustic_waveform_series.name == "acoustic_stimulus"
-        assert acoustic_waveform_series.description == "acoustic stimulus description"
-        np.testing.assert_array_equal(acoustic_waveform_series.data, data)
-        assert acoustic_waveform_series.rate == 42000.0
-        assert acoustic_waveform_series.unit == "n.a."
+        controller = StartAndDurationController(tmin=0.1, tmax=0.3)
+        AcousticWaveformWidget(acoustic_waveform_series, controller)
 
 
 def test_constructor_with_custom_unit():
@@ -89,51 +122,3 @@ def test_mock_acoustic_waveform_series():
     assert aws.description == custom_description
     assert aws.rate == custom_rate
     assert aws.data.shape == custom_shape
-
-
-def test_roundtrip(tmp_path):
-    """Test roundtrip serialization/deserialization."""
-    # Create NWBFile
-    nwbfile = mock_NWBFile()
-    # Create test data
-    acoustic_waveform_series = mock_AcousticWaveformSeries(
-        data_shape=(100, 2),
-    )
-    nwbfile.add_acquisition(acoustic_waveform_series)
-    
-    # Write to file
-    test_path = tmp_path / "test.nwb"
-    with NWBHDF5IO(test_path, mode="w") as io:
-        io.write(nwbfile)
-    
-    # Read from file and verify
-    with NWBHDF5IO(test_path, mode="r", load_namespaces=True) as io:
-        read_nwbfile = io.read()
-        read_acoustic_waveform_series = read_nwbfile.acquisition[acoustic_waveform_series.name]
-        
-        # Check key attributes
-        assert read_acoustic_waveform_series.name == acoustic_waveform_series.name
-        assert read_acoustic_waveform_series.description == acoustic_waveform_series.description
-        assert read_acoustic_waveform_series.rate == acoustic_waveform_series.rate
-        np.testing.assert_array_equal(read_acoustic_waveform_series.data, acoustic_waveform_series.data)
-
-
-def test_acoustic_waveform_widget_with_time_window_controller():
-    """Test the AcousticWaveformWidget with a time window controller."""
-    # Skip test if nwbwidgets or librosa is not installed
-    nwbwidgets = pytest.importorskip("nwbwidgets", reason="nwbwidgets not installed")
-    librosa = pytest.importorskip("librosa", reason="librosa not installed")
-    
-    from nwbwidgets.controllers import StartAndDurationController
-    from ndx_sound.widgets import AcousticWaveformWidget
-    
-    data = np.random.randint(1000, size=(10000,))
-    acoustic_waveform_series = AcousticWaveformSeries(
-        name="acoustic_stimulus",
-        data=data,
-        rate=42000.0,
-        description="acoustic stimulus description",
-    )
-
-    controller = StartAndDurationController(tmin=0.1, tmax=0.3)
-    AcousticWaveformWidget(acoustic_waveform_series, controller)
