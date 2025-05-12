@@ -32,7 +32,7 @@ def main():
             NWBDatasetSpec(
                 name="data",
                 doc="acoustic waveform",
-                dtype='int16',
+                dtype='numeric',
                 shape=((None,), (None, 1), (None, 2)),
                 dims=(("time",), ("time", "channel"), ("time", "channels")),
                 attributes=[
