@@ -33,6 +33,34 @@ def test_add_to_acquisition(tmp_path):
         np.testing.assert_array_equal(read_acoustic_waveform_series.data, acoustic_waveform_series.data)
 
 
+def test_add_to_acquisition_with_float(tmp_path):
+    """Test adding an AcousticWaveformSeries to the acquisition field of an NWBFile."""
+    # Create NWBFile
+    nwbfile = mock_NWBFile()
+    
+    # Create test data
+    rng = np.random.default_rng(seed=0)
+    data = rng.random(size=(100,), dtype="float32")
+    acoustic_waveform_series = mock_AcousticWaveformSeries(data=data)
+    nwbfile.add_acquisition(acoustic_waveform_series)
+
+    # Write to file
+    test_path = tmp_path / "test.nwb"
+    with NWBHDF5IO(test_path, mode="w") as io:
+        io.write(nwbfile)
+
+    # Read from file and verify
+    with NWBHDF5IO(test_path, mode="r", load_namespaces=True) as io:
+        read_nwbfile = io.read()
+        read_acoustic_waveform_series = read_nwbfile.acquisition[acoustic_waveform_series.name]
+        # Check key attributes
+        assert read_acoustic_waveform_series.name == acoustic_waveform_series.name
+        assert read_acoustic_waveform_series.description == acoustic_waveform_series.description
+        assert read_acoustic_waveform_series.rate == acoustic_waveform_series.rate
+        assert read_acoustic_waveform_series.data.dtype == "float32"
+        np.testing.assert_array_equal(read_acoustic_waveform_series.data, data)
+
+
 def test_add_to_stimulus(tmp_path):
     """Test adding an AcousticWaveformSeries to the stimulus field of an NWBFile."""
     # Create NWBFile
