@@ -4,7 +4,7 @@ groups:
   doc: single or multi-channel acoustic series
   datasets:
   - name: data
-    dtype: int16
+    dtype: numeric
     dims:
     - - time
     - - time
