@@ -48,7 +48,7 @@ def main():
                 name="starting_time",
                 default_value=0.,
                 quantity=1,
-                dtype="float",
+                dtype="float64",
                 doc="starting time of acoustic waveform.",
                 attributes=[
                     NWBAttributeSpec(
