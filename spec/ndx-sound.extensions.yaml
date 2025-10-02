@@ -24,7 +24,7 @@ groups:
       value: n.a.
       doc: SI unit of data
   - name: starting_time
-    dtype: float
+    dtype: float64
     default_value: 0.0
     doc: starting time of acoustic waveform.
     attributes:
