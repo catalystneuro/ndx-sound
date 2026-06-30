@@ -44,21 +44,6 @@ def main():
                     )
                 ]
             ),
-            NWBDatasetSpec(
-                name="starting_time",
-                default_value=0.,
-                quantity=1,
-                dtype="float",
-                doc="starting time of acoustic waveform.",
-                attributes=[
-                    NWBAttributeSpec(
-                        name="rate",
-                        required=True,
-                        dtype="float",
-                        doc="sampling frequency of acoustic waveform.",
-                    )
-                ]
-            )
         ],
     )
 
