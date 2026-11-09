@@ -8,15 +8,11 @@ groups:
     dims:
     - - time
     - - time
-      - channel
-    - - time
       - channels
     shape:
     - - null
     - - null
-      - 1
-    - - null
-      - 2
+      - null
     doc: acoustic waveform
     attributes:
     - name: unit

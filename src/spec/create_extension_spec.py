@@ -33,8 +33,8 @@ def main():
                 name="data",
                 doc="acoustic waveform",
                 dtype='numeric',
-                shape=((None,), (None, 1), (None, 2)),
-                dims=(("time",), ("time", "channel"), ("time", "channels")),
+                shape=((None,), (None, None)),
+                dims=(("time",), ("time", "channels")),
                 attributes=[
                     NWBAttributeSpec(
                         name="unit",
