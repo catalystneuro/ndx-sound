@@ -44,6 +44,18 @@ class TestAcousticWaveformSeriesRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
         return acoustic_waveform_series
 
 
+class TestAcousticWaveformSeriesSixChannelsRoundtripPyNWB(AcquisitionH5IOMixin, TestCase):
+    def setUpContainer(self):
+        """Return an AcousticWaveformSeries with six channels, as from a 5.1 surround recording"""
+        acoustic_waveform_series = AcousticWaveformSeries(
+            name="acoustic_stimulus",
+            data=np.random.randint(1000, size=(100, 6)),
+            rate=42000.0,
+            description="acoustic stimulus description",
+        )
+        return acoustic_waveform_series
+
+
 class TestAcousticWaveformSeriesWidget(TestCase):
     def test_AcousticWaveformWidget_with_time_window_controller(self):
         nwbwidgets = pytest.importorskip("nwbwidgets", reason="nwbwidgets not installed")
